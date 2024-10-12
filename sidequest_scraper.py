@@ -6,10 +6,10 @@ import time
 
 import csv
 
-# Replace with the path to your WebDriver
-# driver_path = '/chromedriver-mac-arm64/chromedriver'
+# Path to driver
 driver_path = '/Users/jasonwan/Code/YuanTian Lab/Start Scraper Lab/chromedriver-mac-arm64/chromedriver'
 
+# Setting up webdriver
 service = Service(driver_path)
 driver = webdriver.Chrome(service=service)
 

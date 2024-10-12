@@ -73,7 +73,49 @@ writer.writerow(['Title', 'Date', 'URL', 'Preview'])
 # Writing data for each row
 for post in posts:
     writer.writerow([post['title'], post['date'], post['url'], post['preview']])
-                    
+
+
+
+# Loop through each post in the list
+for post in posts:
+    url = post['url']
+    
+    # Full URL (in case 'url' is a relative path, adjust accordingly)
+    full_url = f"https://communityforums.atmeta.com{url}"  # Adjust the base URL as needed
+    
+    # Make the request
+    response = requests.get(full_url)
+    
+    # Parse the HTML of the page
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Find the main body text within the <div class="lia-message-body-content">
+    body_content = soup.find('div', class_='lia-message-body-content')
+    
+    if body_content:
+        # Get the text content from the div, removing any HTML tags
+        post_body = body_content.get_text(separator=' ', strip=True)
+        print(f"Body content for {url}:")
+        print(post_body)
+        print()
+        
+        # Store the extracted body text in the post dictionary
+        post['body'] = post_body
+    else:
+        print(f"No body content found for {url}")
+        post['body'] = None
 
 # Terminate operation
 forums_csv.close()
+
+# Save the data to a CSV file
+with open('forum_posts.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.writer(csvfile)
+    
+    # Write the header row
+    writer.writerow(['URL', 'Content'])
+    
+    # Write the data rows
+    writer.writerows([[post['url'], post['body']] for post in posts])
+
+print("Data saved to forum_posts.csv")
